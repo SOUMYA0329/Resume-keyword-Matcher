@@ -14,14 +14,15 @@
 * Supports PDF,DOCX,and TXT resumes.
 
  ## TECH STACK
+```
+   |LAYER|                              |TOOL LIBRARY|
 
-  * ### |LAYER|______________________ |TOOL LIBRARY|
- * Language ____________________________ python
- * Resume parshing ____________________ pdfplumber,python-docx
- * Keyword extraction __________________ Sentence-transformers(all-MiniLM-L6-v2)
- * Bullet rewriting ______________________ Claude API(Antropic)
- * Frontend _____________________________ Streamlit
-   
+ * Language                              python
+ * Resume parshing                       pdfplumber,python-docx
+ * Keyword extraction                    Sentence-transformers(all-MiniLM-L6-v2)
+ * Bullet rewriting                      Claude API(Antropic)
+ * Frontend                              Streamlit
+```
 
 ## PROJECT STRUCTURE
 
