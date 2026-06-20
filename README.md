@@ -67,7 +67,7 @@ python -m spacydownload en_core_web_sm
 
 ### 4. Set your Claude API Key
 * Required only for the AI bullet rewriting features,Get a key from
-  console.anthropic.com
+  https://console.anthropic.com
 ```
 #windows(powershell)
 $env:ANTHROPIC_API_KEY="your-key-here"
@@ -105,7 +105,7 @@ http://localhost:8501.
 
 ## LICENSE
 
-This project is open source under the MIT LICENSE 
+This project is open source under the <ins>MIT License</ins> 
 
 ## AUTHOR 
 
