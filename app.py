@@ -23,6 +23,17 @@ st.title("📄 AI Resume & Career-Match Analyzer")
 st.caption("Upload your resume, paste a job description, and get an instant match score with targeted improvements.")
 
 # ---------------------------------------------------------------------------
+# Persistent state - this is what was missing before.
+# Streamlit reruns the whole script on every interaction (typing, clicking
+# anything). Without session_state, results computed in one run vanish on
+# the next run. Storing them here means they survive reruns.
+# ---------------------------------------------------------------------------
+if "analysis" not in st.session_state:
+    st.session_state.analysis = None  # will hold {"score":..., "missing":...} after analysis
+if "rewrites" not in st.session_state:
+    st.session_state.rewrites = None
+
+# ---------------------------------------------------------------------------
 # Inputs
 # ---------------------------------------------------------------------------
 col1, col2 = st.columns(2)
@@ -36,7 +47,8 @@ with col2:
 run_button = st.button("Analyze Match", type="primary", use_container_width=True)
 
 # ---------------------------------------------------------------------------
-# Pipeline
+# Pipeline - runs only when the button is freshly clicked, but the RESULT
+# gets saved into session_state so it survives later reruns.
 # ---------------------------------------------------------------------------
 if run_button:
     if not resume_file or not job_description.strip():
@@ -58,7 +70,20 @@ if run_button:
         score = compute_match_score(resume_text, job_description)
         missing = find_missing_keywords(resume_text, jd_keywords)
 
-    # --- Results: match score -------------------------------------------------
+    # Save results so they don't disappear on the next rerun.
+    st.session_state.analysis = {"score": score, "missing": missing}
+    st.session_state.rewrites = None  # clear any old rewrites from a previous resume/JD
+
+# ---------------------------------------------------------------------------
+# Display results - reads from session_state, so it shows up on every
+# rerun (typing in the bullets box, clicking Rewrite, etc.) not just the
+# exact run where Analyze Match was clicked.
+# ---------------------------------------------------------------------------
+if st.session_state.analysis:
+    score = st.session_state.analysis["score"]
+    missing = st.session_state.analysis["missing"]
+
+    # --- Results: match score ----------------------------------------------
     st.subheader("Match Score")
     st.progress(int(score) / 100)
     st.metric(label="Semantic Match", value=f"{score}%")
@@ -70,14 +95,14 @@ if run_button:
     else:
         st.warning("Low match - consider adding more of the skills/keywords below.")
 
-    # --- Results: missing keywords --------------------------------------------
+    # --- Results: missing keywords ------------------------------------------
     st.subheader("Missing Keywords")
     if missing:
         st.write(", ".join(f"`{kw}`" for kw in missing))
     else:
         st.write("No major keyword gaps detected. 🎉")
 
-    # --- Optional: AI bullet rewriting ----------------------------------------
+    # --- Optional: AI bullet rewriting ---------------------------------------
     st.subheader("Improve Your Bullet Points")
     bullets_input = st.text_area(
         "Paste 2-3 resume bullet points you'd like rewritten (optional):",
@@ -93,8 +118,11 @@ if run_button:
         else:
             bullets = [b.strip("- ").strip() for b in bullets_input.splitlines() if b.strip()]
             with st.spinner("Rewriting with Claude..."):
-                rewrites = rewrite_bullets(bullets, missing)
-            for item in rewrites:
-                st.markdown(f"**Original:** {item['original']}")
-                st.markdown(f"**Improved:** {item['improved']}")
-                st.divider()
+                st.session_state.rewrites = rewrite_bullets(bullets, missing)
+
+    # Show rewrites if we have any saved (survives reruns too).
+    if st.session_state.rewrites:
+        for item in st.session_state.rewrites:
+            st.markdown(f"**Original:** {item['original']}")
+            st.markdown(f"**Improved:** {item['improved']}")
+            st.divider()
