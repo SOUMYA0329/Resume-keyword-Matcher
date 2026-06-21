@@ -1,6 +1,4 @@
 """
-keyword_extractor.py
----------------------
 Extracts the most important skill/requirement keywords from a job
 description using KeyBERT (keyword extraction via embeddings) layered
 on top of spaCy for basic text cleanup and noun-phrase candidates.

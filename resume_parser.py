@@ -1,6 +1,4 @@
 """
-resume_parser.py
-----------------
 Extracts plain text from a resume file (PDF or DOCX) so the rest of the
 pipeline only ever has to deal with plain strings.
 """

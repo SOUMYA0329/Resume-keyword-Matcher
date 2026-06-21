@@ -1,6 +1,4 @@
 """
-rewriter.py
------------
 Uses the Claude API to rewrite weak resume bullet points so they
 naturally incorporate the missing keywords and read as stronger,
 quantified achievements - without fabricating experience the

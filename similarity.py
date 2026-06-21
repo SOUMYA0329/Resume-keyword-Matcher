@@ -1,6 +1,4 @@
 """
-similarity.py
--------------
 Computes a semantic match score between a resume and a job description
 using sentence embeddings (Sentence-BERT) - this is the key upgrade over
 a plain keyword-overlap matcher, since it understands that "led a team

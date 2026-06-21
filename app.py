@@ -1,12 +1,3 @@
-"""
-app.py
-------
-Streamlit front end for the AI Resume & Career-Match Analyzer.
-
-Run with:
-    streamlit run app.py
-"""
-
 import os
 import tempfile
 
@@ -29,13 +20,10 @@ st.caption("Upload your resume, paste a job description, and get an instant matc
 # the next run. Storing them here means they survive reruns.
 # ---------------------------------------------------------------------------
 if "analysis" not in st.session_state:
-    st.session_state.analysis = None  # will hold {"score":..., "missing":...} after analysis
+    st.session_state.analysis = None 
 if "rewrites" not in st.session_state:
     st.session_state.rewrites = None
 
-# ---------------------------------------------------------------------------
-# Inputs
-# ---------------------------------------------------------------------------
 col1, col2 = st.columns(2)
 
 with col1:
@@ -46,10 +34,6 @@ with col2:
 
 run_button = st.button("Analyze Match", type="primary", use_container_width=True)
 
-# ---------------------------------------------------------------------------
-# Pipeline - runs only when the button is freshly clicked, but the RESULT
-# gets saved into session_state so it survives later reruns.
-# ---------------------------------------------------------------------------
 if run_button:
     if not resume_file or not job_description.strip():
         st.warning("Please upload a resume and paste a job description first.")
@@ -74,11 +58,6 @@ if run_button:
     st.session_state.analysis = {"score": score, "missing": missing}
     st.session_state.rewrites = None  # clear any old rewrites from a previous resume/JD
 
-# ---------------------------------------------------------------------------
-# Display results - reads from session_state, so it shows up on every
-# rerun (typing in the bullets box, clicking Rewrite, etc.) not just the
-# exact run where Analyze Match was clicked.
-# ---------------------------------------------------------------------------
 if st.session_state.analysis:
     score = st.session_state.analysis["score"]
     missing = st.session_state.analysis["missing"]
@@ -95,14 +74,12 @@ if st.session_state.analysis:
     else:
         st.warning("Low match - consider adding more of the skills/keywords below.")
 
-    # --- Results: missing keywords ------------------------------------------
     st.subheader("Missing Keywords")
     if missing:
         st.write(", ".join(f"`{kw}`" for kw in missing))
     else:
         st.write("No major keyword gaps detected. 🎉")
 
-    # --- Optional: AI bullet rewriting ---------------------------------------
     st.subheader("Improve Your Bullet Points")
     bullets_input = st.text_area(
         "Paste 2-3 resume bullet points you'd like rewritten (optional):",
@@ -120,7 +97,6 @@ if st.session_state.analysis:
             with st.spinner("Rewriting with Claude..."):
                 st.session_state.rewrites = rewrite_bullets(bullets, missing)
 
-    # Show rewrites if we have any saved (survives reruns too).
     if st.session_state.rewrites:
         for item in st.session_state.rewrites:
             st.markdown(f"**Original:** {item['original']}")
